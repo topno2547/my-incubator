@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="card">
+            <h2>สมัครสมาชิกใหม่</h2>
+            <div class="input-group">
+                <input type="email" id="reg-email" placeholder="อีเมล(เช่น ttt@gmail.com)">
+                <input type="password" id="reg-password" placeholder="รหัสผ่าน (6 ตัวขี้นไป)">
+            </div>
+            <button onclick="register()">ยืนยันการสมัคร</button>
+            <div style="margin-top: 15px;"
+            <span>มีบัญชี? </span>
+            <a href="login.html">เข้าสู่ระบบ</a>
+        </div>
+        <p id="reg-message"></p>
+        </div>
+
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="script.js"></script>
+    </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>ระบบควบคุมตู้ฟักไข่</h2>
+
+        <div class="card">
+            <p>อุณหภูมิ: <span id="temp-val">--</span> °C</p>
+            <p>ความชื้น: <span id="humi-val">--</span> %</p>
+        </div>
+
+        <div class="card">
+            <p>โหมดปัจจุบัน: <strong id="work-mode-status">--</strong></p>
+            <button onclick="controlDevice('WorkMode', 'AUTO')">AUTO</button>
+            <button onclick="controlDevice('WorkMode', 'MANUAL')">MANUAL</button>
+        </div>
+
+        <div class="card">
+            <p>สถานะไฟ: <span id="light-status" style="font-weight:bold;">--</span></p>
+            <button onclick="controlDevice('LightStatus', 'ON')">เปิดไฟ</button>
+            <button onclick="controlDevice('LightStatus', 'OFF')">ปิดไฟ</button>
+        </div>
+
+        <div class="card">
+            <p>สถานะพัดลม: <span id="fan-status" style="font-weight:bold;">--</span></p>
+            <button onclick="controlDevice('FanStatus', 'ON')">เปิดพัดลม</button>
+            <button onclick="controlDevice('FanStatus', 'OFF')">ปิดพัดลม</button>
+        </div>
+
+        <button onclick="logout()" style="background:red; color:white; margin-top:20px;">ออกจากระบบ</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
