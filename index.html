@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
+    <!-- ลิงก์ไปยังไฟล์สไตล์เดิมของคุณ -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,12 +33,111 @@
             <button onclick="controlDevice('FanStatus', 'OFF')">ปิดพัดลม</button>
         </div>
 
+        <!-- ปุ่มออกจากระบบ (ปรับให้เคลียร์ session และรีเฟรชหน้าเว็บแทนการเด้งหนี) -->
         <button onclick="logout()" style="background:red; color:white; margin-top:20px;">ออกจากระบบ</button>
     </div>
 
+    <!-- 1. โหลด Firebase SDK v8 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="script.js"></script>
+
+    <!-- 2. โดดสคริปต์ควบคุมระบบแทนไฟล์ script.js เดิม -->
+    <script>
+        // --- ตั้งค่า Firebase ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBp40COK29MmCZFP8xQclkSTc3WlUMFX2M",
+            authDomain: "myincubator-5ea4c.firebaseapp.com",
+            databaseURL: "https://myincubator-5ea4c-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "myincubator-5ea4c",
+            storageBucket: "myincubator-5ea4c.firebasestorage.app",
+            messagingSenderId: "484232471727",
+            appId: "1:484232471727:web:7cbd288b614b383c94605a",
+            measurementId: "G-41CY6G61YJ"
+        };
+
+        // เริ่มต้น Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // --- ฟังก์ชันดึงข้อมูล Real-time ---
+        function watchIncubatorData() {
+            // ดึงอุณหภูมิและความชื้น (Current)
+            database.ref('Current/Temp').on('value', (s) => {
+                const el = document.getElementById('temp-val');
+                if (el) el.innerText = s.val() !== null ? s.val() : "--";
+            });
+            database.ref('Current/Humi').on('value', (s) => {
+                const el = document.getElementById('humi-val');
+                if (el) el.innerText = s.val() !== null ? s.val() : "--";
+            });
+
+            // ดึงสถานะโหมด (Settings/ManualMode)
+            database.ref('Settings/ManualMode').on('value', (s) => {
+                const isManual = s.val();
+                const el = document.getElementById('work-mode-status');
+                if (el) {
+                    el.innerText = isManual ? "MANUAL" : "AUTO";
+                    el.style.color = isManual ? "orange" : "#007bff";
+                }
+            });
+
+            // สถานะไฟ (Heater) - ดึงจาก Settings/ManualLight
+            database.ref('Settings/ManualLight').on('value', (s) => {
+                const val = s.val(); 
+                const el = document.getElementById('light-status');
+                if (el) {
+                    el.innerText = val ? "ON" : "OFF";
+                    el.style.color = val ? "green" : "gray";
+                }
+            });
+
+            // สถานะพัดลม (Fan) - ดึงจาก Settings/ManualFan
+            database.ref('Settings/ManualFan').on('value', (s) => {
+                const val = s.val(); 
+                const el = document.getElementById('fan-status');
+                if (el) {
+                    el.innerText = val ? "ON" : "OFF";
+                    el.style.color = val ? "green" : "gray";
+                }
+            });
+        }
+
+        // --- ฟังก์ชันสั่งงานส่งค่าไปยัง Firebase ---
+        function controlDevice(type, action) {
+            let path = "";
+            let value = (action === 'ON' || action === 'MANUAL'); // แปลงปุ่มกดเป็น true/false
+
+            if (type === 'WorkMode') path = "Settings/ManualMode";
+            else if (type === 'LightStatus') path = "Settings/ManualLight";
+            else if (type === 'FanStatus') path = "Settings/ManualFan";
+
+            if (path !== "") {
+                console.log("ส่งค่าไปที่:", path, "ค่า:", value);
+                database.ref(path).set(value)
+                    .then(() => console.log("Firebase อัปเดตแล้ว"))
+                    .catch(err => alert("เกิดข้อผิดพลาด: " + err.message));
+            }
+        }
+
+        // --- ฟังก์ชันอื่นๆ ---
+        function logout() { 
+            auth.signOut().then(() => {
+                alert("ออกจากระบบเรียบร้อย");
+                window.location.reload(); // รีเฟรชหน้าเพื่อเคลียร์สถานะตัวแปร
+            }); 
+        }
+
+        function loadDailySummary() {
+            console.log("ระบบพร้อมทำงาน");
+        }
+
+        // --- รันระบบดึงข้อมูลทันทีเมื่อโหลดหน้าจอเสร็จ โดยไม่ต้องผ่านหน้าล็อกอิน ---
+        window.addEventListener('DOMContentLoaded', (event) => {
+            watchIncubatorData();
+            loadDailySummary();
+        });
+    </script>
 </body>
 </html>
