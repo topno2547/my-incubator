@@ -21,11 +21,25 @@
         .btn-blue { background: #007bff; color: white; }
         .btn-orange { background: #fd7e14; color: white; }
         .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.95rem; font-weight: bold; text-align: center; min-width: 80px; }
+        
+        /* 🆕 สไตล์เพิ่มเติมสำหรับระบบนับวันอัตโนมัติ */
+        .status-banner { background: #fff; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .day-focus { font-size: 2.5rem; font-weight: bold; color: #007bff; margin: 10px 0; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>🥚 ระบบควบคุมตู้ฟักไข่อัจฉริยะ</h2>
+
+        <div class="status-banner">
+            <p style="margin:0; font-weight:bold; color:#666;">⏳ จำนวนวันที่ฟักไข่ปัจจุบัน</p>
+            <div class="day-focus"><span id="web-day-count">0.0</span> วัน</div>
+            <div id="incubation-stage" style="font-weight:bold; color:gray;">สถานะ: ยังไม่ได้เริ่มฟัก</div>
+            <div class="btn-group" style="justify-content: center; margin-top:15px;">
+                <button class="btn-green" id="start-inc-btn" onclick="toggleIncubation(true)">🟢 เริ่มฟักไข่รอบใหม่</button>
+                <button class="btn-red" id="stop-inc-btn" onclick="toggleIncubation(false)" style="display:none;">🛑 ล้างค่า / จบการฟัก</button>
+            </div>
+        </div>
 
         <div class="section-title">📊 ค่าสภาพแวดล้อมปัจจุบัน</div>
         <div class="card">
@@ -130,19 +144,45 @@
                 }
             });
 
+            // 🆕 เพิ่มเติม: ติดตามจำนวนวันฟักไข่จริงจากบอร์ดและ Firebase
+            database.ref('Status/CurrentDay').on('value', (s) => {
+                const day = s.val() !== null ? parseFloat(s.val()).toFixed(1) : "0.0";
+                document.getElementById('web-day-count').innerText = day;
+                
+                const stageEl = document.getElementById('incubation-stage');
+                if (day >= 18.0) {
+                    stageEl.innerText = "🔴 ช่วงที่ 2: วันที่ 18-21 เร่งความชื้น/หยุดกลับไข่";
+                    stageEl.style.color = "red";
+                } else if (day > 0.0) {
+                    stageEl.innerText = "🟢 ช่วงที่ 1: วันที่ 1-18 ฟักตัวปกติ (คุมไฟ/กลับไข่)";
+                    stageEl.style.color = "green";
+                }
+            });
+
+            // 🆕 เพิ่มเติม: ตรวจเช็คปุ่มสลับการทำงานระบบ เริ่มฟัก/ล้างค่า
+            database.ref('Settings/IsIncubating').on('value', (s) => {
+                const isInc = s.val();
+                if (isInc) {
+                    document.getElementById('start-inc-btn').style.display = "none";
+                    document.getElementById('stop-inc-btn').style.display = "inline-block";
+                } else {
+                    document.getElementById('start-inc-btn').style.display = "inline-block";
+                    document.getElementById('stop-inc-btn').style.display = "none";
+                    document.getElementById('incubation-stage').innerText = "สถานะ: ยังไม่ได้เริ่มฟัก";
+                    document.getElementById('incubation-stage').style.color = "gray";
+                }
+            });
+
             // 3. ดึงสถานะรายงานจากตู้ฟักจริง (/Status)
-            // ⚠️ ปรับแก้ตรงนี้: สลับการแสดงผลบนเว็บตามข้อมูลที่โค้ด ESP32 ล่าสุดของคุณส่งขึ้นมา
             database.ref('Status/Water').on('value', (s) => {
                 const val = s.val();
                 const el = document.getElementById('water-status');
                 if (el) {
                     if(val === "EMPTY") { 
-                        // เนื่องจาก ESP32 ส่ง EMPTY ตอนลูกลอยลอย (LOW) ดังนั้นบนเว็บต้องแปลผลว่า "ปกติ"
                         el.innerText = "🟢 ปกติ";
                         el.style.backgroundColor = "#28a745";
                         el.style.color = "white";
                     } else if(val === "OK") { 
-                        // เนื่องจาก ESP32 ส่ง OK ตอนลูกลอยจม (HIGH) บนเว็บจึงต้องแปลผลว่า "น้ำแห้ง"
                         el.innerText = "🚨 น้ำแห้ง !!";
                         el.style.backgroundColor = "#dc3545";
                         el.style.color = "white";
@@ -186,6 +226,22 @@
                     el.style.color = "white";
                 }
             });
+        }
+
+        // 🆕 เพิ่มเติม: ฟังก์ชันสั่งเริ่มฟักไข่/ล้างค่า บันทึกเวลาลง Firebase Server
+        function toggleIncubation(start) {
+            if(start) {
+                if(confirm("ต้องการเริ่มฟักไข่รอบใหม่ใช่หรือไม่? ระบบจะเริ่มนับวันที่ 1 ทันที")) {
+                    database.ref('Settings/IsIncubating').set(true);
+                    database.ref('Settings/StartTime').set(firebase.database.ServerValue.TIMESTAMP);
+                }
+            } else {
+                if(confirm("⚠️ คำเตือน: คุณต้องการล้างค่านับวันฟักใช่หรือไม่? (ใช้เมื่อลูกไก่ออกหมดแล้ว)")) {
+                    database.ref('Settings/IsIncubating').set(false);
+                    database.ref('Settings/StartTime').remove();
+                    database.ref('Status/CurrentDay').set(0);
+                }
+            }
         }
 
         // --- ฟังก์ชันส่งคำสั่งควบคุมไปยัง Firebase ---
