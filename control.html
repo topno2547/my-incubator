@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <link href="https://unpkg.com/lucide-static@latest/font/lucide.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ควบคุมตู้ฟักไข่</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>ควบคุมตู้ฟักไข่</h1>
+
+    <!-- สถานะการควบคุม -->
+    <div class="card">
+      <h3>สถานะการควบคุมปัจจุบัน</h3>
+      <hr class="divider">
+
+      <div class="card-row">
+        <h2>โหมดควบคุม</h2>
+        <p id="controlMode" class="big-value1">--</p>
+      </div>
+
+      <hr class="divider">
+
+      <div class="card-row">
+        <h2>พัดลม</h2>
+        <p id="controlFan" class="big-value1">--</p>
+      </div>
+
+      <hr class="divider">
+
+      <div class="card-row">
+        <h2>ฮีตเตอร์</h2>
+        <p id="controlHeater" class="big-value1">--</p>
+      </div>
+
+      <hr class="divider">
+
+      <div class="card-row">
+        <h2>ไฟ</h2>
+        <p id="controlLight" class="big-value1">--</p>
+      </div>
+    </div>
+
+    <!-- ปุ่มควบคุม -->
+    <div class="card">
+      <h3>ปุ่มควบคุม</h3>
+      <hr class="divider">
+
+      <div class="button-grid">
+        <button id="modeBtn">สลับ AUTO / MANUAL</button>
+        <button id="fanBtn">เปิด / ปิด พัดลม</button>
+        <button id="heaterBtn">เปิด / ปิด ฮีตเตอร์</button>
+        <button id="lightBtn">เปิด / ปิด ไฟ</button>
+        <button id="turnBtn">กลับไข่ตอนนี้</button>
+      </div>
+    </div>
+  
+
+  <div class="card">
+    <div class="card card-row">
+            <h2>จำนวนวันที่ฟักไข่</h2>
+            <p id="dayCount" class="big-value green">-- วัน</p>
+        </div>
+        <hr class="divider">
+    <h3>จัดการรอบฟัก</h3>
+    <hr class="divider">
+
+    <div class="button-grid">
+        <button id="startBtn">เริ่มฟัก</button>
+        <button id="stopBtn">หยุดฟัก</button>
+        <button id="resetDayBtn">รีเซ็ตวันฟัก</button>
+    </div>
+  </div>
+  </div>
+
+  <nav class="bottom-nav">
+  <a href="index.html" class="nav-btn ">
+    <div class="icon-house"></div>
+    <small>Dashboard</small>
+  </a>
+
+  <a href="control.html" class="nav-btn active">
+    <div class="icon-toggle-left"></div>
+    <small>Control</small>
+  </a>
+</nav>
+
+  <script type="module" src="control.js"></script>
+</body>
+</html>
