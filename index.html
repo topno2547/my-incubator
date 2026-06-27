@@ -1,0 +1,88 @@
+<!DOCTYPE thml>
+<html lang="th">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="app.js"></script>
+    <link href="https://unpkg.com/lucide-static@latest/font/lucide.css" rel="stylesheet">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, inital-scale=1.0">
+        <title>ตู้ฟักไข่อัจฉริยะ</title>
+        <link rel="stylesheet" href="style.css">
+        <body>
+        <div class="container">
+            <h1>ตู้ฟักไข่อัจฉริยะ</h1>
+        <div class="card card-row">
+            <h2>จำนวนวันที่ฟักไข่</h2>
+            <p id="dayCount" class="big-value green">-- วัน</p>
+        </div>
+        <div class="top">
+            <h3>ค่าสภาพแวดล้อมปัจจุบัน</h3>
+            <hr class="divider">
+        <div class="card-row">
+            <h2>อุณหภูมิในตู้</h2>
+            <p id="temp" class="big-value orange">-- °C</p>
+        </div>
+        <hr class="divider">
+         <div class="card-row">
+            <h2>ความชื้น</h2>
+            <p id="humi" class="big-value blue">-- %</p>
+        </div>
+        </div>
+        <div class="card">
+            <h3>ค่าสถานะ</h3>
+            <hr class="divider">
+        <div class="card-row">
+            <h2>อัปเดตล่าสุด</h2>
+            <p id="updatedAt"class="big-value1">--</p>
+        </div>
+        <div class="card-row">
+            <h2>สถานะระบบ</h2>
+            <p id="systemStatus" class="big-value1 orange">--</p>
+        </div>
+        </div>
+
+        <div class="card">
+            <h3>ระบบ</h3>
+            <hr class="divider">
+        <div class="card-row">
+            <h2>โหมด</h2>
+            <p id="modeStatus" class="big-value1">--</p>
+        </div>
+        <hr class="divider">
+        <div class="card-row">
+            <h2>พัดลม</h2>
+            <p id="fanStatus" class="big-value1">--</p>
+        </div>
+        <hr class="divider">
+        <div class="card-row">
+            <h2>ฮีตเตอร์</h2>
+            <p id="heaterStatus" class="big-value1"></p>
+        </div>
+        <hr class="divider">
+        <dia class="card-row">
+            <h2>มอเตอร์กลับไข่</h2>
+            <p id="turnMotorStatus" class="big-value1">--</p>
+        </dia>
+        <hr class="divider">
+        <div class="card-row">
+            <h2>น้ำ</h2>
+            <p id="waterStatus" class="big-value1">--</p>
+        </div>
+        </div>
+
+        <nav class="bottom-nav">
+  <a href="index.html" class="nav-btn active">
+    <div class="icon-house"></div>
+    <small>Dashboard</small>
+  </a>
+
+  <a href="control.html" class="nav-btn">
+    <div class="icon-toggle-left"></div>
+    <small>Control</small>
+  </a>
+</nav>
+        
+        <script type="module" src="app.js"></script>
+        </body>
+    </head>
+</html>
